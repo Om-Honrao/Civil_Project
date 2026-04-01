@@ -71,6 +71,45 @@
         <div class="slot-grid" id="slotGrid"></div>
       </section>
 
+      <section class="checkout-section" id="checkoutSection" hidden>
+        <h2>Booking Checkout</h2>
+        <p class="checkout-note">Review your selected slot, check the calculation, and confirm booking.</p>
+
+        <div class="checkout-grid">
+          <div class="checkout-card">
+            <h3>Selected Slot Details</h3>
+            <p><strong>Slot:</strong> <span id="summarySlot">-</span></p>
+            <p><strong>Place:</strong> <span id="summaryPlace">-</span></p>
+            <p><strong>Parking Date:</strong> <span id="summaryDate">-</span></p>
+            <p><strong>Parking Time:</strong> <span id="summaryTime">-</span></p>
+            <p><strong>Booking Created At:</strong> <span id="summaryBookedAt">-</span></p>
+          </div>
+
+          <div class="checkout-card">
+            <h3>Cost Calculation</h3>
+            <p><strong>Rate:</strong> Rs <span id="summaryRate">0</span> / hour</p>
+            <p><strong>Duration:</strong> <span id="summaryDuration">0</span> hours</p>
+            <p class="total-line"><strong>Total Cost:</strong> Rs <span id="summaryTotal">0</span></p>
+          </div>
+        </div>
+
+        <form id="confirmForm" class="confirm-form">
+          <label>
+            Mobile Number (India format)
+            <input
+              type="tel"
+              id="phoneNumber"
+              placeholder="+91 9876543210"
+              pattern="^(\\+91[- ]?)?[6-9]\\d{9}$"
+              required
+            />
+          </label>
+          <button type="submit" class="primary-btn">Confirm Booking</button>
+        </form>
+
+        <p id="confirmMessage" class="confirm-message"></p>
+      </section>
+
       <section class="location-section reveal">
         <h2>Pune Coverage</h2>
         <p>

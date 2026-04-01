@@ -232,6 +232,11 @@ input {
   margin: 0.18rem 0;
 }
 
+.slot-action {
+  margin-top: 0.7rem;
+  width: 100%;
+}
+
 .status {
   display: inline-block;
   margin-top: 0.4rem;
@@ -288,6 +293,72 @@ footer {
   color: #46585e;
 }
 
+.checkout-section {
+  margin-top: 2rem;
+  background: var(--surface);
+  backdrop-filter: blur(7px);
+  border: 1px solid var(--stroke);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 1.3rem;
+}
+
+.checkout-note {
+  color: var(--muted);
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 0.9rem;
+  margin-top: 0.7rem;
+}
+
+.checkout-card {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 0.9rem;
+}
+
+.checkout-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+  font-family: "Fraunces", serif;
+}
+
+.total-line {
+  font-size: 1.1rem;
+  color: var(--accent-2);
+}
+
+.confirm-form {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: minmax(230px, 360px) auto;
+  gap: 0.8rem;
+  align-items: end;
+}
+
+.confirm-form button {
+  height: fit-content;
+}
+
+.confirm-message {
+  min-height: 1.2rem;
+  font-size: 0.92rem;
+  margin-top: 0.7rem;
+  font-weight: 600;
+}
+
+.confirm-message.error {
+  color: #9a2d20;
+}
+
+.confirm-message.success {
+  color: #16685d;
+}
+
 @keyframes revealUp {
   to {
     opacity: 1;
@@ -328,6 +399,11 @@ footer {
   }
 
   .booking-form {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-grid,
+  .confirm-form {
     grid-template-columns: 1fr;
   }
 }

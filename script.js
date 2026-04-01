@@ -69,6 +69,21 @@ const bookingForm = document.getElementById("bookingForm");
 const slotSummary = document.getElementById("slotSummary");
 const locationPills = document.getElementById("locationPills");
 const scrollToSlotsBtn = document.getElementById("scrollToSlotsBtn");
+const checkoutSection = document.getElementById("checkoutSection");
+const confirmForm = document.getElementById("confirmForm");
+const confirmMessage = document.getElementById("confirmMessage");
+
+const summarySlot = document.getElementById("summarySlot");
+const summaryPlace = document.getElementById("summaryPlace");
+const summaryDate = document.getElementById("summaryDate");
+const summaryTime = document.getElementById("summaryTime");
+const summaryBookedAt = document.getElementById("summaryBookedAt");
+const summaryRate = document.getElementById("summaryRate");
+const summaryDuration = document.getElementById("summaryDuration");
+const summaryTotal = document.getElementById("summaryTotal");
+
+let lastSearch = null;
+let selectedSlot = null;
 
 function padZero(value) {
   return String(value).padStart(2, "0");
@@ -81,6 +96,57 @@ function addHours(time, hoursToAdd) {
   const newHours = Math.floor(normalized / 60);
   const newMinutes = normalized % 60;
   return `${padZero(newHours)}:${padZero(newMinutes)}`;
+}
+
+function getDurationHours(startTime, endTime) {
+  const [startH, startM] = startTime.split(":").map(Number);
+  const [endH, endM] = endTime.split(":").map(Number);
+  const startMinutes = startH * 60 + startM;
+  const endMinutes = endH * 60 + endM;
+  const diff = endMinutes - startMinutes;
+  return diff > 0 ? diff / 60 : 0;
+}
+
+function getReadableBookingTime() {
+  const now = new Date();
+  return now.toLocaleString("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+}
+
+function clearConfirmMessage() {
+  confirmMessage.textContent = "";
+  confirmMessage.classList.remove("error", "success");
+}
+
+function showConfirmMessage(message, isSuccess) {
+  confirmMessage.textContent = message;
+  confirmMessage.classList.remove("error", "success");
+  confirmMessage.classList.add(isSuccess ? "success" : "error");
+}
+
+function openCheckout(slot) {
+  if (!lastSearch) {
+    return;
+  }
+
+  selectedSlot = slot;
+  const hours = getDurationHours(lastSearch.start, lastSearch.end);
+  const total = Math.round(slot.price * hours);
+
+  summarySlot.textContent = slot.id;
+  summaryPlace.textContent = slot.location;
+  summaryDate.textContent = lastSearch.date;
+  summaryTime.textContent = `${lastSearch.start} - ${lastSearch.end}`;
+  summaryBookedAt.textContent = getReadableBookingTime();
+  summaryRate.textContent = String(slot.price);
+  summaryDuration.textContent = hours.toFixed(2);
+  summaryTotal.textContent = String(total);
+
+  clearConfirmMessage();
+  checkoutSection.hidden = false;
+  checkoutSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function createSlots(location, startTime, endTime) {
@@ -128,8 +194,12 @@ function renderSlots(slots) {
         <p class="slot-meta"><strong>Time:</strong> ${slot.start} - ${slot.end}</p>
         <p class="slot-meta"><strong>Distance:</strong> ${slot.distance} km from selected point</p>
         <span class="status">AVAILABLE</span>
+        <button class="primary-btn slot-action" data-slot-id="${slot.id}" type="button">Proceed to Booking</button>
       </div>
     `;
+
+    const actionBtn = card.querySelector(".slot-action");
+    actionBtn.addEventListener("click", () => openCheckout(slot));
 
     slotGrid.appendChild(card);
   });
@@ -173,8 +243,14 @@ bookingForm.addEventListener("submit", (event) => {
   if (start >= end) {
     slotSummary.textContent = "End time must be later than start time.";
     slotGrid.innerHTML = '<div class="empty-state">Please correct your selected time range.</div>';
+    checkoutSection.hidden = true;
     return;
   }
+
+  lastSearch = { location, date, start, end };
+  selectedSlot = null;
+  checkoutSection.hidden = true;
+  clearConfirmMessage();
 
   const slots = createSlots(location, start, end);
   slotSummary.textContent = `Showing 9 available slots for ${location} on ${date}, between ${start} and ${end}.`;
@@ -185,6 +261,33 @@ bookingForm.addEventListener("submit", (event) => {
 
 scrollToSlotsBtn.addEventListener("click", () => {
   document.getElementById("bookingPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+confirmForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (!selectedSlot || !lastSearch) {
+    showConfirmMessage("Please choose a slot before confirming booking.", false);
+    return;
+  }
+
+  const phoneInput = document.getElementById("phoneNumber");
+  const rawNumber = phoneInput.value.trim();
+  const mobileRegex = /^(\+91[- ]?)?[6-9]\d{9}$/;
+
+  if (!mobileRegex.test(rawNumber)) {
+    showConfirmMessage("Enter a valid Indian mobile number (example: +91 9876543210).", false);
+    return;
+  }
+
+  const hours = getDurationHours(lastSearch.start, lastSearch.end);
+  const total = Math.round(selectedSlot.price * hours);
+  const normalizedPhone = rawNumber.replace(/\s+/g, "");
+  showConfirmMessage(
+    `Booking confirmed for ${selectedSlot.id} at ${selectedSlot.location}. Total: Rs ${total}. Contact: ${normalizedPhone}.`,
+    true
+  );
+  confirmForm.reset();
 });
 
 loadLocations();
