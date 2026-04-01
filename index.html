@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PunePark Pro | Smart Parking in Pune</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-shape bg-shape-one"></div>
+    <div class="bg-shape bg-shape-two"></div>
+
+    <header class="hero">
+      <nav class="top-nav">
+        <div class="brand">PunePark Pro</div>
+        <button class="ghost-btn" id="scrollToSlotsBtn">Book a Slot</button>
+      </nav>
+
+      <section class="hero-content reveal">
+        <p class="tag">Smart Parking Network • Pune</p>
+        <h1>Choose Your Parking Spot by Time and Place</h1>
+        <p class="subtitle">
+          Find available parking across Pune, compare slot timings, and reserve in seconds.
+          Built for busy roads, calmer arrivals, and zero last-minute parking stress.
+        </p>
+      </section>
+    </header>
+
+    <main>
+      <section class="booking-panel reveal" id="bookingPanel">
+        <h2>Book Parking in Pune</h2>
+        <form id="bookingForm" class="booking-form">
+          <label>
+            Pune Location
+            <select id="locationSelect" required>
+              <option value="">Select your location</option>
+            </select>
+          </label>
+
+          <label>
+            Date
+            <input type="date" id="parkingDate" required />
+          </label>
+
+          <label>
+            Start Time
+            <input type="time" id="startTime" required />
+          </label>
+
+          <label>
+            End Time
+            <input type="time" id="endTime" required />
+          </label>
+
+          <button type="submit" class="primary-btn">Show Available Slots</button>
+        </form>
+      </section>
+
+      <section class="slots-section" id="slotsSection">
+        <div class="section-heading reveal">
+          <h2>Available Parking Slots</h2>
+          <p id="slotSummary">Select your location and time to see slots.</p>
+        </div>
+
+        <div class="slot-grid" id="slotGrid"></div>
+      </section>
+
+      <section class="location-section reveal">
+        <h2>Pune Coverage</h2>
+        <p>
+          Our dummy network currently maps major Pune zones including central city, west Pune,
+          east Pune, north, south, and Pimpri-Chinchwad connectors.
+        </p>
+        <div id="locationPills" class="pill-grid"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2026 PunePark Pro • Professional Parking Interface (Demo)</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
