@@ -108,6 +108,37 @@
         </form>
 
         <p id="confirmMessage" class="confirm-message"></p>
+
+        <section id="paymentSection" class="payment-section" hidden>
+          <h3>Payment</h3>
+          <p class="checkout-note">No real money is charged in this version. This simulates payment success/failure.</p>
+
+          <div class="payment-summary">
+            <p><strong>Booking ID:</strong> <span id="paymentBookingId">-</span></p>
+            <p><strong>Payable Amount:</strong> Rs <span id="paymentAmount">0</span></p>
+          </div>
+
+          <form id="paymentForm" class="payment-form">
+            <label>
+              Payment Method
+              <select id="paymentMethod" required>
+                <option value="">Select payment method</option>
+                <option value="UPI">UPI</option>
+                <option value="Card">Card</option>
+                <option value="Net Banking">Net Banking</option>
+              </select>
+            </label>
+
+            <label>
+              Reference (UPI ID or last 4 digits)
+              <input type="text" id="paymentReference" placeholder="example@upi or 1234" required />
+            </label>
+
+            <button type="submit" id="payNowBtn" class="primary-btn">Pay Now</button>
+          </form>
+
+          <p id="paymentMessage" class="payment-message"></p>
+        </section>
       </section>
 
       <section class="location-section reveal">
@@ -121,7 +152,7 @@
     </main>
 
     <footer>
-      <p>© 2026 PunePark Pro • Professional Parking Interface (Demo)</p>
+      <p>© 2026 PunePark Pro • Professional Parking Interface</p>
     </footer>
 
     <script src="script.js"></script>

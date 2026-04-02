@@ -51,18 +51,6 @@ const puneLocations = [
   "FC Road"
 ];
 
-const imageSeeds = [
-  "parking_a1",
-  "parking_b2",
-  "parking_c3",
-  "parking_d4",
-  "parking_e5",
-  "parking_f6",
-  "parking_g7",
-  "parking_h8",
-  "parking_i9"
-];
-
 const slotGrid = document.getElementById("slotGrid");
 const locationSelect = document.getElementById("locationSelect");
 const bookingForm = document.getElementById("bookingForm");
@@ -72,6 +60,12 @@ const scrollToSlotsBtn = document.getElementById("scrollToSlotsBtn");
 const checkoutSection = document.getElementById("checkoutSection");
 const confirmForm = document.getElementById("confirmForm");
 const confirmMessage = document.getElementById("confirmMessage");
+const paymentSection = document.getElementById("paymentSection");
+const paymentForm = document.getElementById("paymentForm");
+const paymentMessage = document.getElementById("paymentMessage");
+const payNowBtn = document.getElementById("payNowBtn");
+const paymentBookingId = document.getElementById("paymentBookingId");
+const paymentAmount = document.getElementById("paymentAmount");
 
 const summarySlot = document.getElementById("summarySlot");
 const summaryPlace = document.getElementById("summaryPlace");
@@ -84,6 +78,7 @@ const summaryTotal = document.getElementById("summaryTotal");
 
 let lastSearch = null;
 let selectedSlot = null;
+let bookingForPayment = null;
 
 function padZero(value) {
   return String(value).padStart(2, "0");
@@ -126,6 +121,30 @@ function showConfirmMessage(message, isSuccess) {
   confirmMessage.classList.add(isSuccess ? "success" : "error");
 }
 
+function clearPaymentState() {
+  bookingForPayment = null;
+  paymentSection.hidden = true;
+  paymentMessage.textContent = "";
+  paymentMessage.classList.remove("error", "success");
+  paymentForm.reset();
+  payNowBtn.disabled = false;
+  payNowBtn.textContent = "Pay Now";
+  paymentBookingId.textContent = "-";
+  paymentAmount.textContent = "0";
+}
+
+function showPaymentMessage(message, isSuccess) {
+  paymentMessage.textContent = message;
+  paymentMessage.classList.remove("error", "success");
+  paymentMessage.classList.add(isSuccess ? "success" : "error");
+}
+
+function generateBookingId() {
+  const stamp = Date.now().toString().slice(-6);
+  const rand = Math.floor(Math.random() * 900 + 100);
+  return `PP${stamp}${rand}`;
+}
+
 function openCheckout(slot) {
   if (!lastSearch) {
     return;
@@ -145,6 +164,7 @@ function openCheckout(slot) {
   summaryTotal.textContent = String(total);
 
   clearConfirmMessage();
+  clearPaymentState();
   checkoutSection.hidden = false;
   checkoutSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -164,7 +184,6 @@ function createSlots(location, startTime, endTime) {
       start,
       end,
       price: 40 + base * 7,
-      image: `https://picsum.photos/seed/${imageSeeds[index]}/600/380`,
       distance: (0.4 + index * 0.2).toFixed(1)
     };
   });
@@ -184,7 +203,6 @@ function renderSlots(slots) {
     card.style.animationDelay = `${index * 0.06}s`;
 
     card.innerHTML = `
-      <img src="${slot.image}" alt="Dummy parking spot ${slot.id}" loading="lazy" />
       <div class="slot-content">
         <div class="slot-title-row">
           <span class="slot-id">${slot.id}</span>
@@ -244,6 +262,7 @@ bookingForm.addEventListener("submit", (event) => {
     slotSummary.textContent = "End time must be later than start time.";
     slotGrid.innerHTML = '<div class="empty-state">Please correct your selected time range.</div>';
     checkoutSection.hidden = true;
+    clearPaymentState();
     return;
   }
 
@@ -251,6 +270,7 @@ bookingForm.addEventListener("submit", (event) => {
   selectedSlot = null;
   checkoutSection.hidden = true;
   clearConfirmMessage();
+  clearPaymentState();
 
   const slots = createSlots(location, start, end);
   slotSummary.textContent = `Showing 9 available slots for ${location} on ${date}, between ${start} and ${end}.`;
@@ -283,11 +303,65 @@ confirmForm.addEventListener("submit", (event) => {
   const hours = getDurationHours(lastSearch.start, lastSearch.end);
   const total = Math.round(selectedSlot.price * hours);
   const normalizedPhone = rawNumber.replace(/\s+/g, "");
+  const bookingId = generateBookingId();
+
+  bookingForPayment = {
+    bookingId,
+    amount: total,
+    slotId: selectedSlot.id,
+    location: selectedSlot.location,
+    phone: normalizedPhone
+  };
+
+  paymentBookingId.textContent = bookingId;
+  paymentAmount.textContent = String(total);
+  paymentSection.hidden = false;
+
   showConfirmMessage(
-    `Booking confirmed for ${selectedSlot.id} at ${selectedSlot.location}. Total: Rs ${total}. Contact: ${normalizedPhone}.`,
+    `Booking confirmed for ${selectedSlot.id} at ${selectedSlot.location}. Total: Rs ${total}. Contact: ${normalizedPhone}. Continue with payment below.`,
     true
   );
+
+  showPaymentMessage("Select a payment method and click Pay Now.", true);
+  paymentSection.scrollIntoView({ behavior: "smooth", block: "start" });
   confirmForm.reset();
+});
+
+paymentForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (!bookingForPayment) {
+    showPaymentMessage("Confirm your booking first to start payment.", false);
+    return;
+  }
+
+  const method = document.getElementById("paymentMethod").value;
+  const reference = document.getElementById("paymentReference").value.trim();
+
+  if (!method || !reference) {
+    showPaymentMessage("Choose payment method and enter payment reference.", false);
+    return;
+  }
+
+  payNowBtn.disabled = true;
+  payNowBtn.textContent = "Processing...";
+  showPaymentMessage("Processing transaction. Please wait...", true);
+
+  setTimeout(() => {
+    const isSuccess = Math.random() > 0.15;
+
+    if (isSuccess) {
+      showPaymentMessage(
+        `Payment successful. Txn ID: TXN-${Date.now().toString().slice(-8)}. Amount Rs ${bookingForPayment.amount} received via ${method}.`,
+        true
+      );
+    } else {
+      showPaymentMessage("Payment failed. Please retry the payment.", false);
+    }
+
+    payNowBtn.disabled = false;
+    payNowBtn.textContent = "Pay Now";
+  }, 1400);
 });
 
 loadLocations();

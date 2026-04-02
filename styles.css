@@ -198,13 +198,6 @@ input {
   animation: cardIn 0.45s ease forwards;
 }
 
-.slot-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  display: block;
-}
-
 .slot-content {
   padding: 0.9rem;
 }
@@ -359,6 +352,52 @@ footer {
   color: #16685d;
 }
 
+.payment-section {
+  margin-top: 1rem;
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 1rem;
+}
+
+.payment-section h3 {
+  margin: 0 0 0.5rem;
+  font-family: "Fraunces", serif;
+}
+
+.payment-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.payment-summary p {
+  margin: 0;
+}
+
+.payment-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 0.8rem;
+  align-items: end;
+}
+
+.payment-message {
+  min-height: 1.2rem;
+  margin-top: 0.75rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.payment-message.error {
+  color: #9a2d20;
+}
+
+.payment-message.success {
+  color: #16685d;
+}
+
 @keyframes revealUp {
   to {
     opacity: 1;
@@ -403,7 +442,9 @@ footer {
   }
 
   .checkout-grid,
-  .confirm-form {
+  .confirm-form,
+  .payment-summary,
+  .payment-form {
     grid-template-columns: 1fr;
   }
 }
